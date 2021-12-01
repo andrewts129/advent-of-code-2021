@@ -22,4 +22,24 @@ class Day1Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#numberOfDepthIncreasesSliding") {
+    describe("sample input") {
+      val input = "input/day1_sample.txt"
+      val expectedOutput = 5
+
+      it("returns the correct result") {
+        assert(Day1.numberOfDepthIncreasesSliding(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day1.txt"
+      val expectedOutput = 1789
+
+      it("returns the correct result") {
+        assert(Day1.numberOfDepthIncreasesSliding(input) == expectedOutput)
+      }
+    }
+  }
 }

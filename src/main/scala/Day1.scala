@@ -8,7 +8,19 @@ object Day1 {
   }
 
   def numberOfDepthIncreases(lines: Seq[String]): Int = {
-    lines.map(_.toInt).sliding(2).count {
+    numIncreasingPairs(lines.map(_.toInt))
+  }
+
+  def numberOfDepthIncreasesSliding(fileName: String): Int = {
+    numberOfDepthIncreasesSliding(readLines(fileName))
+  }
+
+  def numberOfDepthIncreasesSliding(lines: Seq[String]): Int = {
+    numIncreasingPairs(lines.map(_.toInt).sliding(3).map(_.sum).toList)
+  }
+
+  private def numIncreasingPairs(pairs: Seq[Int]): Int = {
+    pairs.sliding(2).count {
       pair => pair(0) < pair(1)
     }
   }
