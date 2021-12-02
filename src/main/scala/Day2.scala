@@ -19,6 +19,24 @@ object Day2 {
     }
   }
 
+  case class Position(x: Int, y: Int, aim: Int) {
+    def +(delta: AimDelta): Position = {
+      Position(x + delta.x, y + delta.y(aim), aim + delta.aim)
+    }
+  }
+
+  case class AimDelta(x: Int, y: Int => Int, aim: Int)
+
+  object AimDelta {
+    def parse(line: String): AimDelta = {
+      line.split(" ", 2) match {
+        case Array("forward", x) => AimDelta(x.toInt, { aim: Int => aim * x.toInt}, 0)
+        case Array("down", y) => AimDelta(0, _ => 0, y.toInt)
+        case Array("up", y) => AimDelta(0, _ => 0, y.toInt * -1)
+      }
+    }
+  }
+
   def productOfFinalPosition(fileName: String): Int = {
     productOfFinalPosition(readLines(fileName))
   }
@@ -28,7 +46,20 @@ object Day2 {
     finalPosition.x * finalPosition.y
   }
 
+  def productOfFinalPositionWithAim(fileName: String): Int = {
+    productOfFinalPositionWithAim(readLines(fileName))
+  }
+
+  def productOfFinalPositionWithAim(lines: Seq[String]): Int = {
+    val finalPosition = getFinalPositionWithAim(lines.map(AimDelta.parse))
+    finalPosition.x * finalPosition.y
+  }
+
   private def getFinalPosition(moves: Seq[Delta]): Delta = {
     moves.reduce(_ + _)
+  }
+
+  private def getFinalPositionWithAim(moves: Seq[AimDelta]): Position = {
+    moves.foldLeft(Position(0, 0, 0))(_ + _)
   }
 }

@@ -22,4 +22,24 @@ class Day2Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#productOfFinalPositionWithAim") {
+    describe("sample input") {
+      val input = "input/day2_sample.txt"
+      val expectedOutput = 900
+
+      it("returns the correct result") {
+        assert(Day2.productOfFinalPositionWithAim(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day2.txt"
+      val expectedOutput = 2120734350
+
+      it("returns the correct result") {
+        assert(Day2.productOfFinalPositionWithAim(input) == expectedOutput)
+      }
+    }
+  }
 }
