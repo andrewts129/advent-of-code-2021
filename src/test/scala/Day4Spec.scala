@@ -22,4 +22,24 @@ class Day4Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#scoreOfLastWinningBingoBoard") {
+    describe("sample input") {
+      val input = "input/day4_sample.txt"
+      val expectedOutput = 1924
+
+      it("returns the correct result") {
+        assert(Day4.scoreOfLastWinningBingoBoard(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day4.txt"
+      val expectedOutput = 9576
+
+      it("returns the correct result") {
+        assert(Day4.scoreOfLastWinningBingoBoard(input) == expectedOutput)
+      }
+    }
+  }
 }

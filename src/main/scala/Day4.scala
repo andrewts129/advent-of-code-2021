@@ -52,6 +52,12 @@ object Day4 {
     scoreOfWinningBingoBoard(numbers, boards)
   }
 
+  def scoreOfLastWinningBingoBoard(fileName: String): Int = {
+    val (numbers, boards) = parseInput(fileName)
+
+    scoreOfLastWinningBingoBoard(numbers, boards)
+  }
+
   private def parseInput(fileName: String): (Seq[Int], Seq[BingoBoard]) = {
     val blocks = repartition(readLines(fileName))
 
@@ -77,5 +83,15 @@ object Day4 {
 
   private def winningBoard(boards: Seq[BingoBoard]): Option[BingoBoard] = {
     boards.find(_.isWinner)
+  }
+
+  @tailrec
+  private def scoreOfLastWinningBingoBoard(numbers: Seq[Int], boards: Seq[BingoBoard]): Int = {
+    val newBoards = boards.map(_.mark(numbers.head))
+
+    newBoards.filter(!_.isWinner) match {
+      case Seq(lastRemainingBoard) => scoreOfWinningBingoBoard(numbers.tail, Seq(lastRemainingBoard))
+      case remainingBoards => scoreOfLastWinningBingoBoard(numbers.tail, remainingBoards)
+    }
   }
 }
