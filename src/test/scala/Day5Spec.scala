@@ -21,5 +21,25 @@ class Day5Spec extends AnyFunSpec {
         assert(Day5.numberOfOverlapPoints(input) == expectedOutput)
       }
     }
+
+    describe("with diagonals") {
+      describe("sample input") {
+        val input = "input/day5_sample.txt"
+        val expectedOutput = 12
+
+        it("returns the correct result") {
+          assert(Day5.numberOfOverlapPoints(input, includeDiagonals = true) == expectedOutput)
+        }
+      }
+
+      describe("real input") {
+        val input = "input/day5.txt"
+        val expectedOutput = 22037
+
+        it("returns the correct result") {
+          assert(Day5.numberOfOverlapPoints(input, includeDiagonals = true) == expectedOutput)
+        }
+      }
+    }
   }
 }

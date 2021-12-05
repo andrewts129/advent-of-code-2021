@@ -3,7 +3,13 @@ package io.andrewsmith.advent_of_code_2021
 import Util.readLines
 
 object Day5 {
-  case class Point(x: Int, y: Int)
+  case class Point(x: Int, y: Int) {
+    def to(other: Point): Seq[Point] = {
+      zip(range(x, other.x), range(y, other.y)).map {
+        case (x1, y1) => Point(x1, y1)
+      }
+    }
+  }
 
   object Point {
     def parse(string: String): Point = {
@@ -27,13 +33,7 @@ object Day5 {
     }
 
     private def pointsCovered: Set[Point] = {
-      if (isVertical) {
-        range(start.y, end.y).map(Point(start.x, _)).toSet
-      } else if (isHorizontal) {
-        range(start.x, end.x).map(Point(_, start.y)).toSet
-      } else {
-        ???
-      }
+      start.to(end).toSet
     }
   }
 
@@ -45,10 +45,10 @@ object Day5 {
     }
   }
 
-  def numberOfOverlapPoints(fileName: String): Int = {
+  def numberOfOverlapPoints(fileName: String, includeDiagonals: Boolean = false): Int = {
     val lines = readLines(fileName).map(Line.parse)
     numberOfOverlapPoints(
-      lines.filter(line => line.isHorizontal || line.isVertical)
+      lines.filter(line => includeDiagonals || line.isHorizontal || line.isVertical)
     )
   }
 
@@ -71,5 +71,9 @@ object Day5 {
     } else {
       a.to(b, -1)
     }
+  }
+
+  private def zip(a: Seq[Int], b: Seq[Int]): Seq[(Int, Int)] = {
+    a.zipAll(b, a.head, b.head)
   }
 }
