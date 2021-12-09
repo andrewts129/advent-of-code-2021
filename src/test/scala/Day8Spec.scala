@@ -22,4 +22,24 @@ class Day8Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#sumOfAllOutputValues") {
+    describe("sample input") {
+      val input = "input/day8_sample.txt"
+      val expectedOutput = 61229
+
+      it("returns the correct result") {
+        assert(Day8.sumOfAllOutputValues(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day8.txt"
+      val expectedOutput = 1012272
+
+      it("returns the correct result") {
+        assert(Day8.sumOfAllOutputValues(input) == expectedOutput)
+      }
+    }
+  }
 }
