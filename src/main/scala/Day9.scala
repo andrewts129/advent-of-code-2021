@@ -9,6 +9,12 @@ object Day9 {
     }
   }
 
+  case class Basin(points: Set[Location]) {
+    def size: Int = {
+      points.size
+    }
+  }
+
   case class HeightMap(rows: Seq[Seq[Location]]) {
     private val width = rows.head.size
     private val height = rows.size
@@ -25,6 +31,10 @@ object Day9 {
       lowPoints.toVector.map(_.riskLevel).sum
     }
 
+    def productOfSizesOfThreeLargestBasins: Int = {
+      threeLargestBasins.toVector.map(_.size).product
+    }
+
     private def points: Set[Location] = {
       rows.flatten.toSet
     }
@@ -35,9 +45,30 @@ object Day9 {
 
     private def isLowPoint(x: Int, y: Int): Boolean = {
       val point = this(x, y).get
-      val neighbors = Set(this(x - 1, y), this(x + 1, y), this(x, y - 1), this(x, y + 1)).flatten
+      val neighbors = neighborsOf(x, y)
 
       neighbors.forall(_.height > point.height)
+    }
+
+    private def neighborsOf(x: Int, y: Int): Set[Location] = {
+      Set(this(x - 1, y), this(x + 1, y), this(x, y - 1), this(x, y + 1)).flatten
+    }
+
+    private def basins: Set[Basin] = {
+      lowPoints.map(basinFor)
+    }
+
+    private def basinFor(lowPoint: Location): Basin = {
+      Basin(uphillFrom(lowPoint) ++ Set(lowPoint))
+    }
+
+    private def uphillFrom(point: Location): Set[Location] = {
+      val uphill = neighborsOf(point.x, point.y).filter(other => other.height > point.height && other.height < 9)
+      uphill ++ uphill.flatMap(uphillFrom)
+    }
+
+    private def threeLargestBasins: Set[Basin] = {
+      basins.toVector.sortBy(_.size).reverse.take(3).toSet
     }
   }
 
@@ -55,5 +86,9 @@ object Day9 {
 
   def sumOfRiskOfLowPoints(fileName: String): Int = {
     HeightMap.parse(readLines(fileName)).sumOfRiskOfLowPoints
+  }
+
+  def productOfSizesOfThreeLargestBasins(fileName: String): Int = {
+    HeightMap.parse(readLines(fileName)).productOfSizesOfThreeLargestBasins
   }
 }

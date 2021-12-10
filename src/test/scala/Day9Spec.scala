@@ -22,4 +22,24 @@ class Day9Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("productOfSizesOfThreeLargestBasins") {
+    describe("sample input") {
+      val input = "input/day9_sample.txt"
+      val expectedOutput = 1134
+
+      it("returns the correct result") {
+        assert(Day9.productOfSizesOfThreeLargestBasins(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day9.txt"
+      val expectedOutput = 1103130
+
+      it("returns the correct result") {
+        assert(Day9.productOfSizesOfThreeLargestBasins(input) == expectedOutput)
+      }
+    }
+  }
 }
