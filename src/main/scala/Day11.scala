@@ -40,6 +40,15 @@ object Day11 {
       }
     }
 
+    def firstStepWithAllFlashing: Int = {
+      if (allJustFlashed) {
+        0
+      } else {
+        val (next, _) = step
+        1 + next.firstStepWithAllFlashing
+      }
+    }
+
     private def step: (OctopusGrid, Int) = {
       val afterEnergyIncrement = rows.map(row => row.map(_.step))
       OctopusGrid(afterEnergyIncrement).processFlashes
@@ -71,6 +80,10 @@ object Day11 {
       values.find(_.readyToFlash)
     }
 
+    private def allJustFlashed: Boolean = {
+      values.forall(_.energyLevel.isEmpty)
+    }
+
     private def neighborsOf(x: Int, y: Int): Set[Octopus] = {
       Set(
         this(x, y + 1),
@@ -95,5 +108,9 @@ object Day11 {
 
   def numFlashesThrough100Steps(fileName: String): Int = {
     OctopusGrid.parse(readLines(fileName)).countFlashes(100)
+  }
+
+  def firstStepWithAllFlashing(fileName: String): Int = {
+    OctopusGrid.parse(readLines(fileName)).firstStepWithAllFlashing
   }
 }

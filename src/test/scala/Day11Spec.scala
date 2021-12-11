@@ -22,4 +22,24 @@ class Day11Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#firstStepWithAllFlashing") {
+    describe("sample input") {
+      val input = "input/day11_sample.txt"
+      val expectedOutput = 195
+
+      it("returns the correct result") {
+        assert(Day11.firstStepWithAllFlashing(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day11.txt"
+      val expectedOutput = 344
+
+      it("returns the correct result") {
+        assert(Day11.firstStepWithAllFlashing(input) == expectedOutput)
+      }
+    }
+  }
 }
