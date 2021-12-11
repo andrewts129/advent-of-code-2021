@@ -1,6 +1,6 @@
 package io.andrewsmith.advent_of_code_2021
 
-import Util.readLines
+import Util.{Grid, parseGridValues, readLines}
 
 object Day9 {
   case class Location(x: Int, y: Int, height: Int) {
@@ -15,18 +15,7 @@ object Day9 {
     }
   }
 
-  case class HeightMap(rows: Seq[Seq[Location]]) {
-    private val width = rows.head.size
-    private val height = rows.size
-
-    def apply(x: Int, y: Int): Option[Location] = {
-      if (0 <= x && x < width && 0 <= y && y < height) {
-        Some(rows(y)(x))
-      } else {
-        None
-      }
-    }
-
+  case class HeightMap(rows: Seq[Seq[Location]]) extends Grid[Location] {
     def sumOfRiskOfLowPoints: Int = {
       lowPoints.toVector.map(_.riskLevel).sum
     }
@@ -35,12 +24,8 @@ object Day9 {
       threeLargestBasins.toVector.map(_.size).product
     }
 
-    private def points: Set[Location] = {
-      rows.flatten.toSet
-    }
-
     private def lowPoints: Set[Location] = {
-      points.filter(point => isLowPoint(point.x, point.y))
+      values.filter(point => isLowPoint(point.x, point.y))
     }
 
     private def isLowPoint(x: Int, y: Int): Boolean = {
@@ -74,13 +59,9 @@ object Day9 {
 
   object HeightMap {
     def parse(lines: Seq[String]): HeightMap = {
-      val points = lines.zipWithIndex.map {
-        case (line, y) => line.toCharArray.zipWithIndex.map {
-          case (height, x) => Location(x, y, height.asDigit)
-        }.toVector
-      }
-
-      HeightMap(points)
+      HeightMap(
+        parseGridValues[Location](lines, (cell, x, y) => Location(x, y, cell.toInt))
+      )
     }
   }
 
