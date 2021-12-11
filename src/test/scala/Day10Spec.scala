@@ -22,4 +22,24 @@ class Day10Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#middleCompletionScore") {
+    describe("sample input") {
+      val input = "input/day10_sample.txt"
+      val expectedOutput = 288957
+
+      it("returns the correct result") {
+        assert(Day10.middleCompletionScore(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day10.txt"
+      val expectedOutput = 2421222841L
+
+      it("returns the correct result") {
+        assert(Day10.middleCompletionScore(input) == expectedOutput)
+      }
+    }
+  }
 }
