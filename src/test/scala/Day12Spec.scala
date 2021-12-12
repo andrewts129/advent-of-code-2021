@@ -40,4 +40,42 @@ class Day12Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#numPossiblePathsWithRevisit") {
+    describe("sample input") {
+      val input = "input/day12_sample.txt"
+      val expectedOutput = 36
+
+      it("returns the correct result") {
+        assert(Day12.numPossiblePathsWithRevisit(input) == expectedOutput)
+      }
+    }
+
+    describe("second sample input") {
+      val input = "input/day12_sample_b.txt"
+      val expectedOutput = 103
+
+      it("returns the correct result") {
+        assert(Day12.numPossiblePathsWithRevisit(input) == expectedOutput)
+      }
+    }
+
+    describe("third sample input") {
+      val input = "input/day12_sample_c.txt"
+      val expectedOutput = 3509
+
+      it("returns the correct result") {
+        assert(Day12.numPossiblePathsWithRevisit(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day12.txt"
+      val expectedOutput = 120535
+
+      it("returns the correct result") {
+        assert(Day12.numPossiblePathsWithRevisit(input) == expectedOutput)
+      }
+    }
+  }
 }

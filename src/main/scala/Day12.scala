@@ -39,26 +39,35 @@ object Day12 {
     }
   }
 
-  case class CaveSystem(start: Cave, end: Cave, passageSet: PassageSet) {
+  case class CaveSystem(start: Cave, end: Cave, passageSet: PassageSet, revisitBurned: Boolean, visitedSmalls: Set[Cave] = Set()) {
     def numPossiblePaths: Int = {
+      if (revisitBurned && visitedSmalls.contains(start)) {
+        return 0
+      }
+
       val pathsForward = passageSet.connectingTo(start)
       val directPaths = pathsForward.connectingTo(end)
       val possibleIndirectPaths = pathsForward.withoutPassagesConnectingTo(end)
 
       val followups = possibleIndirectPaths.passages.map {
         case Passage(a, b) =>
+          val leavingStart = start.label == "start"
           val destination = if (a == start) b else a
 
           start match {
             case BigCave(_) => CaveSystem(
               destination,
               end,
-              passageSet
+              passageSet,
+              revisitBurned,
+              visitedSmalls
             )
             case SmallCave(_) => CaveSystem(
               destination,
               end,
-              passageSet.withoutPassagesConnectingTo(start)
+              if (leavingStart) passageSet.withoutPassagesConnectingTo(start) else passageSet,
+              revisitBurned = revisitBurned || (if (leavingStart) revisitBurned else visitedSmalls.contains(start)),
+              visitedSmalls + start
             )
           }
       }.toList
@@ -68,7 +77,7 @@ object Day12 {
   }
 
   object CaveSystem {
-    def parse(lines: Seq[String]): CaveSystem = {
+    def parse(lines: Seq[String], revisitEnabled: Boolean = false): CaveSystem = {
       val caves = lines.flatMap(_.split("-")).toSet.map {
         (label: String) => label -> Cave.parse(label)
       }.toMap
@@ -76,11 +85,15 @@ object Day12 {
         case Array(startLabel, endLabel) => Passage(caves(startLabel), caves(endLabel))
       }.toSet
 
-      CaveSystem(caves("start"), caves("end"), PassageSet(passages))
+      CaveSystem(caves("start"), caves("end"), PassageSet(passages), !revisitEnabled)
     }
   }
 
   def numPossiblePaths(fileName: String): Int = {
     CaveSystem.parse(readLines(fileName)).numPossiblePaths
+  }
+
+  def numPossiblePathsWithRevisit(fileName: String): Int = {
+    CaveSystem.parse(readLines(fileName), revisitEnabled = true).numPossiblePaths
   }
 }
