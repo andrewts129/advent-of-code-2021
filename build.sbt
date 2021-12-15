@@ -5,5 +5,6 @@ scalaVersion := "2.13.7"
 idePackagePrefix := Some("io.andrewsmith.advent_of_code_2021")
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.9" % "test"
+  "org.scalatest" %% "scalatest" % "3.2.9" % "test",
+  "co.fs2" %% "fs2-core" % "3.2.0"
 )
