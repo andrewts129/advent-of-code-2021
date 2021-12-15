@@ -1,56 +1,60 @@
 package io.andrewsmith.advent_of_code_2021
 
-import fs2.{Pure, Stream}
 import Util.{readLines, repartition}
 
 object Day14 {
-  case class Polymer(stream: Stream[Pure, Char]) {
+  case class Polymer(pairs: Map[(Char, Char), Long], last: Char) {
     def apply(rules: PairInsertionRuleSet, n: Int): Polymer = {
       if (n == 0) {
         this
       } else {
-        val newStream = stream.sliding(2).flatMap { chunk =>
-          val head = chunk(0)
-          val next = chunk(1)
-
-          rules.ruleFor(head, next) match {
-            case Some(rule) => Stream.emits(Seq(head, rule.insertion))
-            case None => Stream.emit(head)
+        val ungrouped = pairs.toVector.flatMap {
+          case (pair, count) => rules.ruleFor(pair) match {
+            case Some(rule) => List(
+              (pair._1, rule.insertion) -> count,
+              (rule.insertion, pair._2) -> count
+            )
+            case None => List(pair -> count)
           }
-        } ++ stream.last.map(_.get)
+        }
 
-        Polymer(newStream)(rules, n - 1)
+        val newPairs = ungrouped.groupMapReduce(_._1)(_._2)(_ + _)
+        Polymer(newPairs, last).apply(rules, n - 1)
       }
     }
 
-    def score: Int = {
+    def score: Long = {
       numElementsOfMostCommon - numElementsOfLeastCommon
     }
 
-    private def numElementsOfMostCommon: Int = {
+    private def numElementsOfMostCommon: Long = {
       elementCounts.values.max
     }
 
-    private def numElementsOfLeastCommon: Int = {
+    private def numElementsOfLeastCommon: Long = {
       elementCounts.values.min
     }
 
-    private def elementCounts: Map[Char, Int] = {
-      stream.fold(
-        Map[Char, Int]()
-      ) {
-        case (counts, char) => counts.updated(char, counts.getOrElse(char, 0) + 1)
-      }.compile.toVector.head
+    private def elementCounts: Map[Char, Long] = {
+      val pairCounts = pairs.toVector.groupMapReduce(_._1._1)(_._2)(_ + _)
+      pairCounts.updated(last, pairCounts(last) + 1)
     }
   }
 
   object Polymer {
     def apply(line: String): Polymer = {
-      Polymer(Stream.emits(line.toCharArray))
+      val pairs = line.sliding(2).toVector
+      val pairCounts = pairs.groupMapReduce(pair => (pair(0), pair(1)))(_ => 1L)(_ + _)
+
+      Polymer(pairCounts, line.last)
     }
   }
 
   case class PairInsertionRuleSet(rules: Set[PairInsertionRule]) {
+    def ruleFor(pair: (Char, Char)): Option[PairInsertionRule] = {
+      ruleFor(pair._1, pair._2)
+    }
+
     def ruleFor(left: Char, right: Char): Option[PairInsertionRule] = {
       rules.find(rule => rule.left == left && rule.right == right)
     }
@@ -66,10 +70,16 @@ object Day14 {
     }
   }
 
-  def getPolymerScoreAfterTenIterations(fileName: String): Int = {
+  def getPolymerScoreAfterTenIterations(fileName: String): Long = {
     val (initialPolymer, pairInsertionRules) = parseInput(fileName)
 
     initialPolymer(pairInsertionRules, 10).score
+  }
+
+  def getPolymerScoreAfterFortyIterations(fileName: String): Long = {
+    val (initialPolymer, pairInsertionRules) = parseInput(fileName)
+
+    initialPolymer(pairInsertionRules, 40).score
   }
 
   private def parseInput(fileName: String): (Polymer, PairInsertionRuleSet) = {
