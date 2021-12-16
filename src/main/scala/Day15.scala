@@ -7,17 +7,37 @@ import scala.collection.mutable
 
 object Day15 {
 
-  case class Cavern(rows: Seq[Seq[Int]]) extends Grid[Int] {
+  case class Cavern(rows: Seq[Seq[Int]], expand: Boolean) extends Grid[Int] {
+    private val trueWidth = rows.head.size
+    private val trueHeight = rows.size
+
+    override val width: Int = if (expand) trueWidth * 5 else trueWidth
+    override val height: Int = if (expand) trueHeight * 5 else trueHeight
+
     private val end = Point(width - 1, height - 1)
 
     def lowestPathRisk: Int = {
       distances.apply(end)
     }
 
+    override def apply(x: Int, y: Int): Option[Int] = {
+      if (expand) {
+        if (inBounds(x, y)) {
+          Some(
+            ((rows(y % trueHeight)(x % trueWidth) + (x / trueWidth) + (y / trueHeight) - 1) % 9) + 1
+          )
+        } else {
+          None
+        }
+      } else {
+        super.apply(x, y)
+      }
+    }
+
     private def distances: Map[Point, Int] = {
       val initialDistances = allPoints.toList.map {
         case start @ Point(0, 0) => (0, start)
-        case other => (999999, other)
+        case other => (9999999, other)
       }
 
       distances(initialDistances)
@@ -58,14 +78,19 @@ object Day15 {
   }
 
   object Cavern {
-    def parse(lines: Seq[String]): Cavern = {
+    def parse(lines: Seq[String], expand: Boolean = false): Cavern = {
       Cavern(
-        parseGridValues(lines, (cell, _, _) => cell.toInt)
+        parseGridValues(lines, (cell, _, _) => cell.toInt),
+        expand
       )
     }
   }
 
   def lowestPathRisk(fileName: String): Int = {
     Cavern.parse(readLines(fileName)).lowestPathRisk
+  }
+
+  def lowestPathRiskExpanded(fileName: String): Int = {
+    Cavern.parse(readLines(fileName), expand = true).lowestPathRisk
   }
 }

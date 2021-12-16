@@ -22,4 +22,24 @@ class Day15Spec extends AnyFunSpec {
       }
     }
   }
+
+  describe("#lowestPathRiskExpanded") {
+    describe("sample input") {
+      val input = "input/day15_sample.txt"
+      val expectedOutput = 315
+
+      it("returns the correct result") {
+        assert(Day15.lowestPathRiskExpanded(input) == expectedOutput)
+      }
+    }
+
+    describe("real input") {
+      val input = "input/day15.txt"
+      val expectedOutput = 3045
+
+      it("returns the correct result") {
+        assert(Day15.lowestPathRiskExpanded(input) == expectedOutput)
+      }
+    }
+  }
 }
